@@ -1,0 +1,100 @@
+blueprint:
+  name: HVAC Pause
+  description: Pauses HVAC when windows/doors open; resumes last state once closed
+  domain: automation
+  input:
+    climate_device:
+      description: Climate entity used for climate control.
+      name: Climate Device
+      selector:
+        entity:
+          domain:
+          - climate
+          multiple: false
+    doors_windows:
+      description: Group of entities that will activate automation. (Assumes 'on'
+        means 'open')
+      name: Door and window sensors.
+      selector:
+        entity:
+          domain:
+          - group
+          - binary_sensor
+          multiple: false
+    pause_delay:
+      description: Time to wait before pausing the HVAC system.
+      name: Pause Delay
+      default:
+        hours: 0
+        minutes: 5
+        seconds: 0
+      selector:
+        duration: {}
+    resume_delay:
+      description: Time to wait before resuming the HVAC system.
+      name: Resume Delay
+      default:
+        hours: 0
+        minutes: 0
+        seconds: 30
+      selector:
+        duration: {}
+    pause_action:
+      description: Optional additional action to perform when climate entity is paused.
+      name: Pause Action (Optional)
+      default: []
+      selector:
+        action: {}
+    resume_action:
+      description: Optional additional action to perform when climate entity resumes.
+      name: Resume Action (Optional)
+      default: []
+      selector:
+        action: {}
+  source_url: https://gist.github.com/raffy-ops/2bdf967036d8d274fb1f62572ed5e545
+variables:
+  pause_action: !input pause_action
+  resume_action: !input resume_action
+  climate_device: !input climate_device
+  name_id: '{{ state_attr( climate_device ,''friendly_name'')|lower |replace('' '',''_'')
+    | regex_replace(find=''[^\w]'', replace='''') ~ ''_snapshot'' }}'
+mode: single
+trigger:
+- platform: state
+  entity_id: !input doors_windows
+  from: 'off'
+  to: 'on'
+  for: !input pause_delay
+  id: group_open
+condition:
+- condition: not
+  conditions:
+  - condition: state
+    entity_id: !input climate_device
+    state: 'off'
+action:
+- service: scene.create
+  data:
+    scene_id: '{{ name_id }}'
+    snapshot_entities: !input climate_device
+- service: climate.set_hvac_mode
+  target:
+    entity_id: !input climate_device
+  data:
+    hvac_mode: 'off'
+- choose:
+  - conditions: '{{ pause_action is defined }}'
+    sequence: !input pause_action
+- wait_for_trigger:
+  - platform: state
+    entity_id: !input doors_windows
+    from: 'on'
+    to: 'off'
+    for: !input resume_delay
+  continue_on_timeout: false
+- service: scene.turn_on
+  target:
+    entity_id: '{{ ''scene.'' ~ name_id }}'
+- choose:
+  - conditions: '{{ resume_action is defined }}'
+    sequence: !input resume_action

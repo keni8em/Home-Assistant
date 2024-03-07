@@ -1,0 +1,66 @@
+blueprint:
+  name: Sunset / Sunrise Light
+  description: Turn a light on at sunset or sunrise and off at a specified time
+  domain: automation
+  input:
+    offset_time:
+      name: Offset Time
+      description: This sets the offset to the Sunrise / Sunset time
+      default: 00:00:00
+      selector:
+        time: {}
+    off_time:
+      name: Off Time
+      description: This sets the time at which the lights shall be turned off
+      default: '23:00:00'
+      selector:
+        time: {}
+    target_light:
+      name: Lights
+      description: The lights to control.
+      selector:
+        target:
+          entity:
+          - domain:
+            - light
+    trigger_selector:
+      name: Sunrise / Sunset
+      default: sunset
+      selector:
+        select:
+          mode: dropdown
+          options:
+          - label: Sunset
+            value: sunset
+          - label: Sunrise
+            value: sunrise
+          custom_value: false
+          multiple: false
+          sort: false
+  source_url: https://github.com/chickey/HA-Blueprints/blob/main/light-on-sunset-sunrise-off-time.yaml
+trigger:
+- platform: sun
+  event: !input trigger_selector
+  offset: !input offset_time
+  id: '1'
+- platform: time
+  at: !input off_time
+  id: '2'
+condition: []
+action:
+- choose:
+  - conditions:
+    - condition: trigger
+      id: '1'
+    sequence:
+    - service: light.turn_on
+      data: {}
+      target: !input target_light
+  - conditions:
+    - condition: trigger
+      id: '2'
+    sequence:
+    - service: light.turn_off
+      data: {}
+      target: !input target_light
+mode: single

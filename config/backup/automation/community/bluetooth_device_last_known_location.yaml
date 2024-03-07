@@ -1,0 +1,63 @@
+blueprint:
+  name: Bluetooth Device Last Known Location
+  description: Create or update an entity for a given Bluetooth MAC address with the
+    last location it was connected
+  domain: automation
+  input:
+    gps_tracking_entity:
+      name: GPS Entity
+      description: GPS entity associated with the bluetooth device used to determine
+        location
+      selector:
+        entity:
+          domain:
+          - device_tracker
+          multiple: false
+    bluetooth_tracking_entity:
+      name: Bluetooth Entity
+      description: Bluetooth entity used to track device.
+      selector:
+        entity:
+          domain:
+          - sensor
+          multiple: false
+    target_mac:
+      name: Target MAC Address
+      description: MAC Address of the device you are trying to track
+      selector:
+        text:
+          multiline: false
+    dev_name:
+      name: Tracked Device Name
+      description: Name for tracked Bluetooth device (Optional)
+      default: ''
+      selector:
+        text:
+          multiline: false
+  source_url: https://gist.github.com/dcnielsen90/e9a0a44e7b3989fc23a2a9f813ccba11
+variables:
+  target_mac: !input target_mac
+  dev_name: !input dev_name
+  gps_tracking_entity: !input gps_tracking_entity
+  new_device_name: "{% if (dev_name == '') %}\n  {{ target_mac | replace(\":\",\"_\")
+    }}\n{% else %}\n  {{ dev_name }}\n{% endif %}\n"
+trigger:
+- platform: state
+  entity_id: !input bluetooth_tracking_entity
+  attribute: connected_paired_devices
+condition:
+- condition: template
+  value_template: "{% set from_state = namespace(connected=false) %}\n{% set to_state
+    = namespace(connected=false) %}\n{% for device in trigger.from_state.attributes.connected_paired_devices
+    -%}\n  {% if device.startswith(target_mac) %} {% set from_state.connected = True
+    %} {% endif -%}\n{%- endfor %}\n{% for device in trigger.to_state.attributes.connected_paired_devices
+    -%}\n  {% if device.startswith(target_mac) %} {% set to_state.connected = True
+    %} {% endif -%}\n{%- endfor %}\n{{ from_state.connected and not to_state.connected
+    }}\n"
+action:
+- service: device_tracker.see
+  data_template:
+    dev_id: '{{ new_device_name }}'
+    gps:
+    - '{{ state_attr(gps_tracking_entity,"latitude") }}'
+    - '{{ state_attr(gps_tracking_entity,"longitude") }}'

@@ -1,0 +1,421 @@
+blueprint:
+  name: Turn Light, Switch, Entity or Scene On & Off with Trigger Conditions
+  description: "# Turn Light, Switch, Entity or Scene On & Off with Trigger Conditions\n**Version:
+    1.5**\n\nThe most common automation used to turn ON and OFF a light, switch, entity
+    or a scene with a binary sensor, the sun's elevation, an ambient light value or
+    time when their value changes state or crosses over their set value.\n\nLet us
+    know what you think of this blueprint and for community support including updates:
+    [Click Here](https://community.home-assistant.io/t/turn-light-switch-or-scene-on-off-with-trigger-conditions/527354?u=blacky)\n\n**The
+    Automation Process:**\n  - Turn ON a Light, Switch, Entity or a Scene with a binary
+    sensor, the sun's elevation, an ambient light value or time.\n  - Turn OFF a Light,
+    Switch, Entity or a Scene with a binary sensor, the sun's elevation, an ambient
+    light value or time.\n  - You have the option to set weekdays. This is a global
+    option for all trigger conditions.\n\nRequired = *\n\n**Need help?** See our FAQ:
+    [Click Here](https://community.home-assistant.io/t/turn-light-switch-or-scene-on-off-with-trigger-conditions/527354/2?u=blacky)\n\n**If
+    you like my blueprints, and would like to show your support or just say thank
+    you?** [Click Here](https://www.paypal.com/donate/?hosted_button_id=WAZS3QSDTPGA8)
+    \U0001F642\n"
+  domain: automation
+  input:
+    entity_switch:
+      name: Lights - Switches - Entities - Scenes *
+      description: The lights that get turned ON and OFF with a binary sensor, the
+        sun's elevation, an ambient light value or time. You can also add switches
+        and scenes. If adding a scene please read "Scenes To Turn OFF" below.
+      selector:
+        target: {}
+    end_scenes:
+      name: Scenes To Turn OFF
+      description: If you have selected a scene to be turned ON above in "Lights -
+        Switches - Entities - Scenes" and you would like it to be turned OFF, then
+        you must create another identical scene with everything OFF and select it
+        here.
+      default: []
+      selector:
+        entity:
+          multiple: true
+          filter:
+          - domain:
+            - scene
+    include_light_control:
+      name: Light Control
+      description: Select the options you would like to use. It will only control
+        a "light" entity that has a brightness setting.
+      default: dont_use_brightness
+      selector:
+        select:
+          options:
+          - label: Use brightness
+            value: use_brightness
+          - label: Dont use brightness
+            value: dont_use_brightness
+          custom_value: false
+          multiple: false
+          sort: false
+    light_brightness:
+      name: Brightness
+      description: Brightness of the lights when they are turned ON.
+      default: 100
+      selector:
+        number:
+          min: 1.0
+          max: 100.0
+          mode: slider
+          step: 1.0
+          unit_of_measurement: '%'
+    include_bypass:
+      name: Use The By-pass Option (Optional)
+      description: Select enable or disable.
+      default: bypass_disabled
+      selector:
+        select:
+          options:
+          - label: Enable the By-pass option
+            value: bypass_enabled
+          - label: Disable the By-pass option
+            value: bypass_disabled
+          custom_value: false
+          multiple: false
+          sort: false
+    motion_bypass:
+      name: By-pass
+      description: Select a switch that will By-pass the options and make your lights
+        function as normal. The entity cannot be included in the "Lights - Switches
+        - Entities - Scenes" selection.
+      default: []
+      selector:
+        entity: {}
+    include_binary_sensor:
+      name: Use The Binary Sensor Option (Optional)
+      description: This is used for adding a condition to only work when a [Binary
+        Sensor](https://www.home-assistant.io/integrations/binary_sensor/) is ON or
+        OFF. It will not work with a motion sensor. If you would like to use a motion
+        sensor then please consider this blueprint [Click Here](https://community.home-assistant.io/t/sensor-light-motion-sensor-door-sensor-sun-elevation-lux-value-scenes-time-light-control-device-tracker-night-lights/481048).
+      default: binary_disabled
+      selector:
+        select:
+          options:
+          - label: Enable the binary sensor option
+            value: binary_enabled
+          - label: Disable the binary sensor option
+            value: binary_disabled
+          custom_value: false
+          multiple: false
+          sort: false
+    binary_sensor:
+      name: Binary Sensor
+      description: Select the binary sensor. The binary sensor must stay ON or OFF.
+        If you would like more than one binary sensor please use a group helper.
+      default: []
+      selector:
+        entity:
+          filter:
+          - domain:
+            - binary_sensor
+          multiple: false
+    include_sun:
+      name: Use The Sun Option (Optional)
+      description: This is used for adding a condition to only work when the Sun elevation
+        crosses over its elevation value.
+      default: sun_disabled
+      selector:
+        select:
+          options:
+          - label: Enable the sun option
+            value: sun_enabled
+          - label: Disable the sun option
+            value: sun_disabled
+          custom_value: false
+          multiple: false
+          sort: false
+    sun_elevation:
+      name: Sun Elevation
+      description: This is the angle between the sun and the horizon. Negative values
+        mean the sun is BELOW the horizon. Guide is -1.5 (dusk) and -4.0 (dawn).
+      default: -1.5
+      selector:
+        number:
+          min: -10.0
+          max: 5.0
+          step: 0.5
+          unit_of_measurement: degrees
+          mode: slider
+    include_ambient:
+      name: Use The Ambient Option (Optional)
+      description: This is used for adding a condition to only work when the Ambient
+        Light LUX Value crosses over its LUX value.
+      default: ambient_disabled
+      selector:
+        select:
+          options:
+          - label: Enable the ambient option
+            value: ambient_enabled
+          - label: Disable the ambient option
+            value: ambient_disabled
+          custom_value: false
+          multiple: false
+          sort: false
+    ambient_light_sensor:
+      name: Ambient Light Sensor
+      description: Select the ambient light sensor.
+      default: []
+      selector:
+        entity:
+          filter:
+          - domain:
+            - sensor
+            device_class:
+            - illuminance
+          multiple: false
+    ambient_light_value:
+      name: Ambient Light LUX Value
+      description: Set the Ambient Light LUX Value. Guide is 20 lux (dusk) and 80
+        lux (dawn).
+      default: 20
+      selector:
+        number:
+          min: 0.0
+          max: 500.0
+          step: 10.0
+          unit_of_measurement: LUX
+          mode: slider
+    include_time:
+      name: Use The Time Options (Optional)
+      description: This is used for adding a condition to only work when the time
+        crosses over its set value.
+      default: time_disabled
+      selector:
+        select:
+          options:
+          - label: Enable the time options
+            value: time_enabled
+          - label: Disable the time options
+            value: time_disabled
+          custom_value: false
+          multiple: false
+          sort: false
+    after_time:
+      name: On Time
+      description: Set the on time.
+      default: 00:00:00
+      selector:
+        time: {}
+    before_time:
+      name: Off Time
+      description: Set the off time.
+      default: 00:00:00
+      selector:
+        time: {}
+    include_weekdays:
+      name: Use The Weekdays Option (Optional)
+      description: This is used for adding a condition to only work on set weekdays.
+        This is a global option for all trigger conditions.
+      default: weekday_disabled
+      selector:
+        select:
+          options:
+          - label: Enable the weekday option
+            value: weekday_enabled
+          - label: Disable the weekday option
+            value: weekday_disabled
+          custom_value: false
+          multiple: false
+          sort: false
+    weekday_options:
+      name: Weekdays
+      description: Select the days of the week you would like the automation to run.
+      default:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
+      selector:
+        select:
+          multiple: true
+          mode: list
+          options:
+          - label: Monday
+            value: mon
+          - label: Tuesday
+            value: tue
+          - label: Wednesday
+            value: wed
+          - label: Thursday
+            value: thu
+          - label: Friday
+            value: fri
+          - label: Saturday
+            value: sat
+          - label: Sunday
+            value: sun
+          custom_value: false
+          sort: false
+  source_url: https://gist.github.com/Blackshome/e6c8f1bf846bab2fa4431934a0a85770
+mode: restart
+max_exceeded: silent
+variables:
+  entity_switch: !input entity_switch
+  end_scenes: !input end_scenes
+  include_light_control: !input include_light_control
+  light_brightness: !input light_brightness
+  include_bypass: !input include_bypass
+  motion_bypass: !input motion_bypass
+  include_binary_sensor: !input include_binary_sensor
+  binary_sensor: !input binary_sensor
+  include_sun: !input include_sun
+  sun_elevation: !input sun_elevation
+  include_ambient: !input include_ambient
+  ambient_light_sensor: !input ambient_light_sensor
+  ambient_light_value: !input ambient_light_value
+  include_time: !input include_time
+  after_time: !input after_time
+  before_time: !input before_time
+  include_weekdays: !input include_weekdays
+  weekday_options: !input weekday_options
+trigger:
+- platform: state
+  id: t1
+  entity_id: !input binary_sensor
+  from: 'off'
+  to: 'on'
+- platform: state
+  id: t2
+  entity_id: !input binary_sensor
+  from: 'on'
+  to: 'off'
+- platform: numeric_state
+  id: t3
+  entity_id: sun.sun
+  attribute: elevation
+  below: !input sun_elevation
+- platform: numeric_state
+  id: t4
+  entity_id: sun.sun
+  attribute: elevation
+  above: !input sun_elevation
+- platform: numeric_state
+  id: t5
+  entity_id: !input ambient_light_sensor
+  below: !input ambient_light_value
+- platform: numeric_state
+  id: t6
+  entity_id: !input ambient_light_sensor
+  above: !input ambient_light_value
+- platform: time
+  id: t7
+  at: !input after_time
+- platform: time
+  id: t8
+  at: !input before_time
+condition:
+- condition: or
+  conditions:
+  - condition: and
+    conditions:
+    - '{{ include_binary_sensor == ''binary_enabled'' }}'
+    - condition: trigger
+      id:
+      - t1
+      - t2
+  - condition: and
+    conditions:
+    - '{{ include_sun == ''sun_enabled'' }}'
+    - condition: trigger
+      id:
+      - t3
+      - t4
+  - condition: and
+    conditions:
+    - '{{ include_ambient == ''ambient_enabled'' }}'
+    - condition: trigger
+      id:
+      - t5
+      - t6
+  - condition: and
+    conditions:
+    - '{{ include_time == ''time_enabled'' }}'
+    - condition: trigger
+      id:
+      - t7
+      - t8
+- condition: or
+  conditions:
+  - '{{ include_bypass == ''bypass_disabled'' }}'
+  - '{{ motion_bypass == [] }}'
+  - '{{ (include_bypass == ''bypass_enabled'') and (states[motion_bypass].state ==
+    ''off'') }}'
+- condition: or
+  conditions:
+  - '{{ include_binary_sensor == ''binary_disabled'' }}'
+  - '{{ binary_sensor == [] }}'
+  - '{{ (include_binary_sensor == ''binary_enabled'') and (states[binary_sensor].state
+    == ''on'') }}'
+  - '{{ (include_binary_sensor == ''binary_enabled'') and (states[binary_sensor].state
+    == ''off'') }}'
+- condition: or
+  conditions:
+  - '{{ include_sun == ''sun_disabled'' }}'
+  - '{{ (include_sun == ''sun_enabled'') and (state_attr(''sun.sun'',''elevation'')
+    <= sun_elevation | float(90)) }}'
+  - '{{ (include_sun == ''sun_enabled'') and (state_attr(''sun.sun'',''elevation'')
+    >= sun_elevation | float(90)) }}'
+- condition: or
+  conditions:
+  - '{{ include_ambient == ''ambient_disabled'' }}'
+  - '{{ ambient_light_sensor == [] }}'
+  - '{{ (include_ambient == ''ambient_enabled'') and (states[ambient_light_sensor].state
+    | int < ambient_light_value | int) }}'
+  - '{{ (include_ambient == ''ambient_enabled'') and (states[ambient_light_sensor].state
+    | int > ambient_light_value | int) }}'
+- condition: or
+  conditions:
+  - '{{ include_time == ''time_disabled'' }}'
+  - '{{ include_time == ''time_enabled'' }}'
+- condition: or
+  conditions:
+  - '{{ include_weekdays == ''weekday_disabled'' }}'
+  - condition: and
+    conditions:
+    - condition: time
+      weekday: !input weekday_options
+    - '{{ include_weekdays == ''weekday_enabled'' }}'
+action:
+- choose:
+  - conditions:
+    - condition: trigger
+      id:
+      - t1
+      - t3
+      - t5
+      - t7
+    sequence:
+    - alias: Turn on
+      service: homeassistant.turn_on
+      target: !input entity_switch
+    - choose:
+      - alias: Set the brightness for the light switch
+        conditions:
+        - condition: template
+          value_template: '{{ include_light_control == ''use_brightness'' }}'
+        sequence:
+        - service: light.turn_on
+          target: !input entity_switch
+          data:
+            brightness_pct: !input light_brightness
+  - conditions:
+    - condition: trigger
+      id:
+      - t2
+      - t4
+      - t6
+      - t8
+    sequence:
+    - alias: Turn off
+      service: homeassistant.turn_off
+      target: !input entity_switch
+    - alias: Turn off the scenes
+      service: scene.turn_on
+      entity_id: !input end_scenes

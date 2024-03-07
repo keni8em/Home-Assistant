@@ -1,0 +1,652 @@
+- id: '1697546090175'
+  alias: 'group: office radiator toggle'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.office_radiator_toggle
+    id: office-thermostat
+  - platform: state
+    entity_id:
+    - climate.office_smart_radiator
+    id: office-radiator
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - office-thermostat
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            state: 'on'
+            entity_id: input_boolean.office_radiator_toggle
+          sequence:
+          - service: climate.turn_on
+            data: {}
+            target:
+              entity_id: climate.office_smart_radiator
+        default:
+        - service: climate.turn_off
+          data: {}
+          target:
+            entity_id: climate.office_smart_radiator
+    - conditions:
+      - condition: trigger
+        id:
+        - office-radiator
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.office_smart_radiator
+            state: heat
+          sequence:
+          - service: input_boolean.turn_on
+            data: {}
+            target:
+              entity_id: input_boolean.office_radiator_toggle
+        default:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id: input_boolean.office_radiator_toggle
+- id: '1699156877329'
+  alias: Set Fridge PID parameters
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.pid_proportional_fridge
+    - input_number.pid_integral_fridge
+    - input_number.pid_derivative_fridge
+    - input_number.pid_external_fridge
+  condition: []
+  action:
+  - service: smart_thermostat.set_pid_gain
+    data:
+      kp: '{{ states( ''input_number.pid_proportional_fridge'' ) }}'
+      ki: '{{ states( ''input_number.pid_integral_fridge'' ) }}'
+      kd: '{{ states( ''input_number.pid_derivative_fridge'' ) }}'
+      ke: '{{ states( ''input_number.pid_external_fridge'' ) }}'
+    target:
+      entity_id: climate.office_fridge_smart_thermostat
+  - service: smart_thermostat.clear_integral
+    data: {}
+    target:
+      entity_id: climate.office_fridge_smart_thermostat
+  - service: smart_thermostat.reload
+    data: {}
+  mode: single
+- id: '1699385861323'
+  alias: Set Office Smart Radiator PID parameters
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.pid_proportional_office
+    - input_number.pid_integral_office
+    - input_number.pid_derivative_office
+    - input_number.pid_external_office
+  condition: []
+  action:
+  - service: smart_thermostat.set_pid_gain
+    data:
+      kp: '{{ states( ''input_number.pid_proportional_office'' ) }}'
+      ki: '{{ states( ''input_number.pid_integral_office'' ) }}'
+      kd: '{{ states( ''input_number.pid_derivative_office'' ) }}'
+      ke: '{{ states( ''input_number.pid_external_office'' ) }}'
+    target:
+      entity_id: climate.office_smart_thermostat
+  - service: smart_thermostat.clear_integral
+    data: {}
+    target:
+      entity_id: climate.office_smart_thermostat
+  - service: smart_thermostat.reload
+    data: {}
+  mode: single
+- id: '1699385890363'
+  alias: Set Bedroom PID parameters
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.pid_proportional_bedroom
+    - input_number.pid_integral_bedroom
+    - input_number.pid_derivative_bedroom
+    - input_number.pid_external_bedroom
+  condition: []
+  action:
+  - service: smart_thermostat.set_pid_gain
+    data:
+      kp: '{{ states( ''input_number.pid_proportional_bedroom'' ) }}'
+      ki: '{{ states( ''input_number.pid_integral_bedroom'' ) }}'
+      kd: '{{ states( ''input_number.pid_derivative_bedroom'' ) }}'
+      ke: '{{ states( ''input_number.pid_external_bedroom'' ) }}'
+    target:
+      entity_id: climate.bedroom_smart_thermostat
+  - service: smart_thermostat.clear_integral
+    data: {}
+    target:
+      entity_id: climate.bedroom_smart_thermostat
+  - service: smart_thermostat.reload
+    data: {}
+  mode: single
+- id: '1700607335849'
+  alias: Set Office Smart Radiator Target Temperature
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.smart_thermostat_output_office
+  condition: []
+  action:
+  - variables:
+      var_temp_min: 14
+      var_temp_max: '{{ state_attr(''climate.office_smart_radiator'', ''max_temp'')
+        | float(0) }}'
+      var_pid_output: '{{ state_attr(''climate.office_smart_thermostat'', ''control_output'')
+        | float(0) }}'
+      var_temp_target: '{{ var_temp_min + ( (var_temp_max - var_temp_min) *var_pid_output/100
+        ) }}'
+  - service: climate.set_temperature
+    data:
+      temperature: '{{ var_temp_target }}'
+    target:
+      entity_id: climate.office_smart_radiator
+  mode: restart
+- id: '1706670228680'
+  alias: 'manual: Office Scene Switch Actions'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.vscene_b1_office_single_click
+    id: b1-single-click
+    alias: 'Office scene switch : B1 single click'
+  - platform: state
+    entity_id:
+    - switch.vscene_b2_office_single_click
+    id: b2-single-click
+    alias: 'Office scene switch : B2 single click'
+  - alias: 'Office scene switch : B2 double click'
+    platform: state
+    entity_id:
+    - switch.vscene_b2_office_doble_click
+    id: b2-double-click
+  - platform: state
+    entity_id:
+    - switch.vscene_b3_office_single_click
+    id: b3-single-click
+    alias: 'Office scene switch : B3 single click'
+  - alias: 'Office scene switch : B3 double click'
+    platform: state
+    entity_id:
+    - switch.vscene_b3_office_double_click
+    id: b3-double-click
+  - platform: state
+    entity_id:
+    - switch.vscene_b4_office_single_click
+    id: b4-single-click
+    alias: 'Office scene switch : B4 single click'
+  - alias: 'Office scene switch : B4 double click'
+    platform: state
+    entity_id:
+    - switch.vscene_b4_office_double_click
+    id: b4-double-click
+  - alias: 'Office scene switch : B4 long press'
+    platform: state
+    entity_id:
+    - switch.vscene_b4_office_long_press
+    id: b4-long-press
+  condition: []
+  action:
+  - alias: Button 1 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b1-single-click
+      sequence:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          brightness_pct: 80
+        target:
+          entity_id: light.office_light_bars_local
+    - conditions: []
+      sequence: []
+    - conditions: []
+      sequence: []
+  - alias: Button 2 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b2-single-click
+      sequence:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          rgb_color:
+          - 255
+          - 175
+          - 5
+          brightness_pct: 80
+        target:
+          entity_id: light.office_light_bars_local
+    - conditions:
+      - condition: trigger
+        id:
+        - b2-double-click
+      sequence:
+      - service: rest_command.logicapps_execute
+        metadata: {}
+        data: {}
+    - conditions: []
+      sequence: []
+  - alias: Button 3 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b3-single-click
+      sequence:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          rgb_color:
+          - 0
+          - 255
+          - 0
+          brightness_pct: 80
+        target:
+          entity_id: light.office_light_bars_local
+    - conditions:
+      - condition: trigger
+        id:
+        - b3-double-click
+      sequence:
+      - service: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.office_desk_lights_local
+    - conditions: []
+      sequence: []
+  - alias: Button 4 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b4-single-click
+      sequence:
+      - service: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.office_ceiling_light_local
+    - conditions:
+      - condition: trigger
+        id:
+        - b4-double-click
+      sequence:
+      - service: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.group_office_floor_lamps
+    - conditions:
+      - condition: trigger
+        id:
+        - b4-long-press
+      sequence:
+      - service: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.office_printer_power_local
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 10
+          milliseconds: 0
+      - service: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.office_printer_power_local
+  mode: single
+- id: '1706863583215'
+  alias: 'manual: Kitchen Scene Switch Actions'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.vscene_kitchen_single_click
+    id: single-click
+    alias: Single Click
+  - platform: state
+    entity_id:
+    - switch.vscene_kitchen_double_click
+    id: double-click
+    alias: Double Click
+  - platform: state
+    entity_id:
+    - switch.vscene_kitchen_long_press
+    id: long-press
+    alias: Long Press
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single-click
+      sequence:
+      - parallel:
+        - repeat:
+            count: 10
+            sequence:
+            - service: light.toggle
+              metadata: {}
+              data: {}
+              target:
+                entity_id: light.office_ceiling_light_local
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 2
+                milliseconds: 0
+        - repeat:
+            count: 10
+            sequence:
+            - service: light.toggle
+              metadata: {}
+              data: {}
+              target:
+                entity_id: light.office_floor_lamp_left_local
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 1
+                milliseconds: 0
+        - repeat:
+            count: 10
+            sequence:
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 1
+                milliseconds: 0
+            - service: light.toggle
+              metadata: {}
+              data: {}
+              target:
+                entity_id: light.office_floor_lamp_right_local
+        - repeat:
+            count: 10
+            sequence:
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 1
+                milliseconds: 0
+            - service: light.toggle
+              metadata: {}
+              data: {}
+              target:
+                entity_id: light.office_desk_lights_local
+    - conditions:
+      - condition: trigger
+        id:
+        - double-click
+      sequence: []
+    - conditions:
+      - condition: trigger
+        id:
+        - long-press
+      sequence: []
+  mode: single
+- id: '1706896777638'
+  alias: 'manual: Bedroom Scene Switch Actions'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.vscene_b1_bedroom_single_click
+    id: b1-single-click
+    alias: 'Bedroom scene switch : B1 single click'
+  - alias: 'Bedroom scene switch : B2 single click'
+    platform: state
+    entity_id:
+    - switch.vscene_b2_bedroom_single_click
+    id: b2-single-click
+  - alias: 'Bedroom scene switch : B3 single click'
+    platform: state
+    entity_id:
+    - switch.vscene_b3_bedroom_single_click
+    id: b3-single-click
+  - alias: 'Bedroom scene switch : B4 single click'
+    platform: state
+    entity_id:
+    - switch.vscene_b4_bedroom_single_click
+    id: b4-single-click
+  condition: []
+  action:
+  - alias: Button 1 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b1-single-click
+      sequence:
+      - service: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.mags_underblanket_local
+    - conditions: []
+      sequence: []
+    - conditions: []
+      sequence: []
+  - alias: Button 2 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b2-single-click
+      sequence:
+      - service: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.mags_overblanket_local
+    - conditions: []
+      sequence: []
+    - conditions: []
+      sequence: []
+  - alias: Button 3 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b3-single-click
+      sequence:
+      - service: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.bedroom_dimplex_heater_local
+    - conditions: []
+      sequence: []
+    - conditions: []
+      sequence: []
+  - alias: Button 4 Actions
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - b4-single-click
+      sequence:
+      - service: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.mags_underblanket_local
+      - service: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.mags_overblanket_local
+      - service: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.bedroom_dimplex_heater_local
+    - conditions: []
+      sequence: []
+    - conditions: []
+      sequence: []
+  mode: single
+- id: '1707091087146'
+  alias: 'external: Tado Climate HVAC Mode Changed'
+  description: ''
+  trigger:
+  - alias: When Tado HVAC Mode Changes to unavailable
+    platform: state
+    entity_id:
+    - climate.front_room_tado
+    - climate.family_room_tado
+    - climate.kitchen_tado
+    - climate.spare_room_tado
+    - climate.maitius_room_tado
+    - climate.maireads_room_tado
+    - climate.bedroom_tado
+    id: to-unavailable
+    to: unavailable
+  - alias: When Tado HVAC Mode Changes to unknown
+    platform: state
+    entity_id:
+    - climate.front_room_tado
+    - climate.family_room_tado
+    - climate.kitchen_tado
+    - climate.spare_room_tado
+    - climate.maitius_room_tado
+    - climate.maireads_room_tado
+    - climate.bedroom_tado
+    id: to-unknown
+    to: unknown
+  - alias: When Tado HVAC Mode Changes to unavailable
+    platform: state
+    entity_id:
+    - climate.front_room_tado
+    - climate.family_room_tado
+    - climate.kitchen_tado
+    - climate.spare_room_tado
+    - climate.maitius_room_tado
+    - climate.maireads_room_tado
+    - climate.bedroom_tado
+    id: from-unavailable
+    from: unavailable
+  - alias: When Tado HVAC Mode Changes to unknown
+    platform: state
+    entity_id:
+    - climate.front_room_tado
+    - climate.family_room_tado
+    - climate.kitchen_tado
+    - climate.spare_room_tado
+    - climate.maitius_room_tado
+    - climate.maireads_room_tado
+    - climate.bedroom_tado
+    id: from-unknown
+    from: unknown
+  - alias: When Tado HVAC Mode is Manually Changed
+    platform: state
+    entity_id:
+    - climate.front_room_tado
+    - climate.family_room_tado
+    - climate.kitchen_tado
+    - climate.spare_room_tado
+    - climate.maitius_room_tado
+    - climate.maireads_room_tado
+    - climate.bedroom_tado
+    id: hvac-mode-changed
+    to:
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - to-unavailable
+        - to-unknown
+        - from-unavailable
+        - from-unknown
+      sequence:
+      - stop: ''
+      alias: Tado becomes unavailable
+    - conditions:
+      - condition: trigger
+        id:
+        - hvac-mode-changed
+      - condition: not
+        conditions:
+        - condition: trigger
+          id:
+          - to-unavailable
+          - to-unknown
+          - from-unavailable
+          - from-unknown
+      sequence:
+      - service: notify.notify
+        metadata: {}
+        data:
+          message: "Tado HVAC Mode Changed: \n{{ area_name(trigger.entity_id) }} -
+            {{states(trigger.entity_id) | upper }} - {{ state_attr(trigger.entity_id,
+            'temperature' ) }}°C"
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: ''
+      sequence:
+      - variables:
+          heating_control: climate.front_room_tado
+        alias: 'Define variable: heating_control'
+    - conditions: []
+      sequence:
+      - variables:
+          heating_control: climate.family_room_tado
+        alias: 'Define variable: heating_control'
+    - conditions: []
+      sequence:
+      - variables:
+          heating_control: climate.kitchen_tado
+        alias: 'Define variable: heating_control'
+    - conditions: []
+      sequence:
+      - variables:
+          heating_control: climate.bedroom_tado
+        alias: 'Define variable: heating_control'
+    - conditions: []
+      sequence:
+      - variables:
+          heating_control: climate.maitius_room_tado
+        alias: 'Define variable: heating_control'
+    - conditions: []
+      sequence:
+      - variables:
+          heating_control: climate.maireads_room_tado
+        alias: 'Define variable: heating_control'
+    - conditions: []
+      sequence:
+      - variables:
+          heating_control: climate.spare_room_tado
+        alias: 'Define variable: heating_control'
+  mode: single

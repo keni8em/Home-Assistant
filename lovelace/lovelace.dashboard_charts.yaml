@@ -1,0 +1,8 @@
+config:
+  views:
+  - badges: []
+    cards:
+    - cardName: historycard-6886230
+      type: custom:history-explorer-card
+    title: Home
+    type: panel

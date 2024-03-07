@@ -1,0 +1,318 @@
+blueprint:
+  name: "Motion Activated Lighting"
+  description: |
+    # Motion Activated Lighting
+  domain: automation
+  input:
+    motion_entity:
+      name: "Motion Sensor *"
+      description: |
+        ***Required setting*** : Select motion sensor to trigger this lighting automation.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+          multiple: false
+
+    light_targets:
+      name: "Lighting Selection *"
+      description: |
+        ***Required setting*** : Select lights to be turned on when motion is 'detected'.
+      selector:
+        entity:
+          domain: light
+          multiple: true
+
+    motion_actions:
+      name: "Activate on Motion Events"
+      description: ""
+      default:
+        - lights_on
+        - lights_off
+      selector:
+        select:
+          options:
+            - label: Lights On
+              value: lights_on
+            - label: Lights Off
+              value: lights_off
+          multiple: true
+          custom_value: false
+          mode: list
+          sort: false
+
+    motion_timeout:
+      name: "Lights Off Idle Time"
+      description: |
+        ***Optional setting*** : Time duration after motion has 'cleared' before the lights will automatically turn off.
+        *Default value: 2 minutes*
+      default:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      selector:
+        duration: {}
+
+    time_on_trigger:
+      name: "Time On"
+      description: |
+        ***Optional setting*** : Time of day motion sensing will become active.
+        For 24 hour monitoring, configure *Time On* and *Time Off* to the same time.
+        *Default value*: 00:00:00 (i.e. midnight).
+        *format = [ hour : minute : second ]*
+      default: "00:00:00"
+      selector:
+        time: {}
+
+    time_off_trigger:
+      name: "Time Off"
+      description: |
+        ***Optional setting*** : Time of day motion sensing will become inactive.
+        For 24 hour monitoring, configure *Time On* and *Time Off* to the same time.
+        *Default value*: 00:00:00 (i.e. midnight).
+        *format = [ hour : minute : second ]*
+      default: "00:00:00"
+      selector:
+        time: {}
+
+    sun_trigger:
+      name: "Sun elevation : Optional setting : sun angle sensing becomes enabled/disabled"
+      description: |
+        Motion sensing will be active when sun elevation is below set position.
+        **Default Configuration**: Active sensing below 90 degree (i.e. **24hour**)
+        Zero degrees = time of morning sunrise and evening sunset.
+        ==> Suggested evening start and morning end time --> sun elevation below 5 degrees
+      default: 90
+      selector:
+        number:
+          min: -90.0
+          max: 90.0
+          unit_of_measurement: degrees
+          step: 0.5
+          mode: slider
+
+    weekday_schedule:
+      name: "Days of the Week"
+      description: |
+        ***Optional setting*** : Select the days of the week that motion detection will be active.
+        *Default setting: 7 days*
+      default:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+      selector:
+        select:
+          options:
+            - label: Monday
+              value: mon
+            - label: Tuesday
+              value: tue
+            - label: Wednesday
+              value: wed
+            - label: Thursday
+              value: thu
+            - label: Friday
+              value: fri
+            - label: Saturday
+              value: sat
+            - label: Sunday
+              value: sun
+          multiple: true
+          custom_value: false
+          mode: list
+          sort: false
+
+    notification_on:
+      name: "Notification: Lights on message"
+      description: |
+        ***Optional setting*** : 
+          Enter message content to recieve a notification when lights have turned on.
+      default:
+      selector:
+        text:
+
+    notification_off:
+      name: "Notification: Lights off message"
+      description: |
+        ***Optional setting*** : 
+          Enter message content to recieve a notification when lights have turned off.
+      default:
+      selector:
+        text:
+
+    lighting_helper_toggle:
+      name: "Active action tracker"
+      description: |
+        ***Required setting*** :
+          Select the unique helper variable to be used to track trigger based actions
+          *note: the automation requires this helper to function correctly*
+      default:
+      selector:
+        entity:
+          domain: input_boolean
+          multiple: false
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+  - platform: state
+    entity_id:
+      - !input motion_entity
+    to: "on"
+    id: motion_detected
+  - platform: state
+    entity_id:
+      - !input motion_entity
+    from: "on"
+    id: motion_cleared
+  - platform: homeassistant
+    event: start
+
+condition:
+  - condition: time
+    weekday: !input weekday_schedule
+
+variables:
+  time_on: !input time_on_trigger
+  time_off: !input time_off_trigger
+  message_on: !input notification_on
+  message_off: !input notification_off
+  motion_events: !input motion_actions
+
+  notify_on: |
+    {% if message_on is not none %} true
+    {% else %} false
+    {% endif %}
+
+  notify_off: |
+    {% if message_off is not none %} true
+    {% else %} false
+    {% endif %}
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: motion_detected
+          - condition: numeric_state
+            entity_id: sun.sun
+            attribute: elevation
+            below: !input sun_trigger
+          - condition: template
+            value_template: "{{ time_on == time_off }}"
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input lighting_helper_toggle
+
+      - conditions:
+          - condition: trigger
+            id: motion_detected
+          - condition: numeric_state
+            entity_id: sun.sun
+            attribute: elevation
+            below: !input sun_trigger
+          - condition: template
+            value_template: "{{ time_on < time_off }}"
+          - condition: template
+            value_template: >-
+              {{ time_on <= now().strftime('%H:%M:%S') <= time_off }}
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input lighting_helper_toggle
+
+      - conditions:
+          - condition: trigger
+            id: motion_detected
+          - condition: numeric_state
+            entity_id: sun.sun
+            attribute: elevation
+            below: !input sun_trigger
+          - condition: template
+            value_template: "{{ time_on > time_off }}"
+          - condition: template
+            value_template: >-
+              {{ time_on <= now().strftime('%H:%M:%S') or now().strftime('%H:%M:%S') <= time_off }}
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input lighting_helper_toggle
+
+      - conditions:
+          - condition: trigger
+            id: motion_cleared
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: !input lighting_helper_toggle
+
+    default:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: !input lighting_helper_toggle
+
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input lighting_helper_toggle
+            state: "on"
+          - condition: template
+            value_template: "{{ 'lights_on' in motion_events }}"
+        sequence:
+          - repeat:
+              sequence:
+                - service: light.turn_on
+                  target:
+                    entity_id: !input light_targets
+                - delay:
+                    seconds: 5
+              while:
+                - condition: not
+                  conditions:
+                    - condition: state
+                      entity_id: !input light_targets
+                      state: "on"
+          - if:
+              - condition: template
+                value_template: "{{ notify_on }}"
+            then:
+              - service: notify.notify
+                data:
+                  message: "{{ message_on }}"
+
+      - conditions:
+          - condition: state
+            entity_id: !input lighting_helper_toggle
+            state: "off"
+          - condition: template
+            value_template: "{{ 'lights_off' in motion_events }}"
+        sequence:
+          - delay: !input motion_timeout
+          - repeat:
+              sequence:
+                - service: light.turn_off
+                  target:
+                    entity_id: !input light_targets
+                - delay:
+                    seconds: 5
+              while:
+                - condition: not
+                  conditions:
+                    - condition: state
+                      entity_id: !input light_targets
+                      state: "off"
+          - if:
+              - condition: template
+                value_template: "{{ notify_off }}"
+            then:
+              - service: notify.notify
+                data:
+                  message: "{{ message_off }}"
+
+    default: []

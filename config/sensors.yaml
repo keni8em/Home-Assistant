@@ -1,0 +1,141 @@
+# # ############### #
+# # AVERAGE SENSORS #
+# # ############### #
+
+- platform: average
+  name: "Office Average Temperature"
+  unique_id: sensor.office_temperature_average
+  entities:
+    - sensor.office_tuya_temperature_sensor
+    - sensor.office_heater_current_temperature
+
+# - platform: template
+#   sensors:
+#     office_temperature_target:
+#       unit_of_measurement: "degrees"
+#       value_template: "{{ state_attr('climate.office_heater', 'temperature') }}"
+
+# # ################################## #
+# # SMART THERMOSTAT PID DEBUG SENSORS #
+# # ################################## #
+
+# - platform: template
+#   sensors:
+#     smart_thermostat_output_bedroom:
+#       friendly_name: pid output bedroom
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.bedroom_smart_thermostat', 'control_output') | float(0) }}"
+#     smart_thermostat_p_bedroom:
+#       friendly_name: pid p bedroom
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.bedroom_smart_thermostat', 'pid_p') | float(0) }}"
+#     smart_thermostat_i_bedroom:
+#       friendly_name: pid i bedroom
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.bedroom_smart_thermostat', 'pid_i') | float(0) }}"
+#     smart_thermostat_d_bedroom:
+#       friendly_name: pid d bedroom
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.bedroom_smart_thermostat', 'pid_d') | float(0) }}"
+#     smart_thermostat_e_bedroom:
+#       friendly_name: pid e bedroom
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.bedroom_smart_thermostat', 'pid_e') | float(0) }}"
+#     smart_thermostat_dt_bedroom:
+#       friendly_name: pid dt bedroom
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.bedroom_smart_thermostat', 'pid_dt') | float(0) | round(2) }}"
+#     smart_thermostat_kp_bedroom:
+#       friendly_name: kp bedroom
+#       value_template: "{{ states('input_number.proportional') | float }}"
+#     smart_thermostat_ki_bedroom:
+#       friendly_name: ki bedroom
+#       value_template: "{{ states('input_number.integral') | float }}"
+#     smart_thermostat_kd_bedroom:
+#       friendly_name: kd bedroom
+#       value_template: "{{ states('input_number.derivative') | float }}"
+#     smart_thermostat_ke_bedroom:
+#       friendly_name: ke bedroom
+#       value_template: "{{ states('input_number.external') | float }}"
+
+# - platform: template
+#   sensors:
+#     smart_thermostat_output_office:
+#       friendly_name: pid output office
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.office_smart_thermostat', 'control_output') | float(0) }}"
+#     smart_thermostat_p_office:
+#       friendly_name: pid p office
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.office_smart_thermostat', 'pid_p') | float(0) }}"
+#     smart_thermostat_i_office:
+#       friendly_name: pid i office
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.office_smart_thermostat', 'pid_i') | float(0) }}"
+#     smart_thermostat_d_office:
+#       friendly_name: pid d office
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.office_smart_thermostat', 'pid_d') | float(0) }}"
+#     smart_thermostat_e_office:
+#       friendly_name: pid e office
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.office_smart_thermostat', 'pid_e') | float(0) }}"
+#     smart_thermostat_dt_office:
+#       friendly_name: pid dt office
+#       # unit_of_measurement: "%"
+#       value_template: "{{ state_attr('climate.office_smart_thermostat', 'pid_dt') | float(0) | round(2) }}"
+#     smart_thermostat_kp_office:
+#       friendly_name: kp office
+#       value_template: "{{ states('input_number.proportional') | float }}"
+#     smart_thermostat_ki_office:
+#       friendly_name: ki office
+#       value_template: "{{ states('input_number.integral') | float }}"
+#     smart_thermostat_kd_office:
+#       friendly_name: kd office
+#       value_template: "{{ states('input_number.derivative') | float }}"
+#     smart_thermostat_ke_office:
+#       friendly_name: ke office
+#       value_template: "{{ states('input_number.external') | float }}"
+
+- platform: template
+  sensors:
+    smart_thermostat_fridge_output:
+      friendly_name: pid output fridge
+      # unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.office_fridge_smart_thermostat', 'control_output') | float(0) }}"
+    smart_thermostat_fridge_p:
+      friendly_name: pid p fridge
+      # unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.office_fridge_smart_thermostat', 'pid_p') | float(0) }}"
+    smart_thermostat_fridge_i:
+      friendly_name: pid i fridge
+      # unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.office_fridge_smart_thermostat', 'pid_i') | float(0) }}"
+    smart_thermostat_fridge_d:
+      friendly_name: pid d fridge
+      # unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.office_fridge_smart_thermostat', 'pid_d') | float(0) }}"
+    smart_thermostat_fridge_e:
+      friendly_name: pid e fridge
+      # unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.office_fridge_smart_thermostat', 'pid_e') | float(0) }}"
+    smart_thermostat_fridge_dt:
+      friendly_name: pid dt fridge
+      # unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.office_fridge_smart_thermostat', 'pid_dt') | float(0) | round(2) }}"
+    smart_thermostat_fridge_kp:
+      unique_id: sensor.smart_thermostat_fridge_kp
+      friendly_name: kp fridge
+      value_template: "{{ states('input_number.pid_proportional_fridge') | float }}"
+    smart_thermostat_fridge_ki:
+      unique_id: sensor.smart_thermostat_fridge_ki
+      friendly_name: ki fridge
+      value_template: "{{ states('input_number.pid_integral_fridge') | float }}"
+    smart_thermostat_fridge_kd:
+      unique_id: sensor.smart_thermostat_fridge_kd
+      friendly_name: kd fridge
+      value_template: "{{ states('input_number.pid_derivative_fridge') | float }}"
+    smart_thermostat_fridge_ke:
+      unique_id: sensor.smart_thermostat_fridge_ke
+      friendly_name: ke fridge
+      value_template: "{{ states('input_number.pid_external_fridge') | float }}"

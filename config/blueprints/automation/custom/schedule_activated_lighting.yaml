@@ -1,0 +1,331 @@
+blueprint:
+  name: "Schedule Activated Lighting"
+  description: |
+    # Schedule Activated Lighting
+  domain: automation
+  input:
+    light_targets:
+      name: "Lighting Selection *"
+      description: |
+        ***Required setting*** : Select lights to be turned on/off at the scheduled times.
+      selector:
+        entity:
+          domain: light
+          multiple: true
+
+    time_on_trigger:
+      name: "Time On - time of day ⏰"
+      description: |
+        ***Optional setting*** : Select the time of day for the lights to be turned on.
+        *format = [ hour : minute : second ]*
+      default:
+      selector:
+        time: {}
+
+    time_off_trigger:
+      name: "Time Off - time of day ⏰"
+      description: |
+        ***Optional setting*** : Select the time of day for the lights to be turned off.
+        *format = [ hour : minute : second ]*
+      default:
+      selector:
+        time: {}
+
+    sun_trigger:
+      name: "Time On/Off - sun position 🔆"
+      description: |
+        ***Optional setting*** : Select the sun elevation to trigger the lights.
+        ---> Morning activated - lights will turn off
+        ---> Evening activated - Lights will turn on
+        *Zero Degrees = Dawn / Dusk*
+        ***Default setting*** *: 90 deg ... i.e. automation is purely time based*
+      default: 90
+      selector:
+        number:
+          min: -90
+          max: 90
+          unit_of_measurement: degrees
+          step: 0.5
+          mode: slider
+
+    weekday_schedule:
+      name: "Days of the Week"
+      description: |
+        ***Optional setting*** : Select the days of the week that the schedule will be active.
+        *Default setting: 7 days*
+      default:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+      selector:
+        select:
+          options:
+            - label: Monday
+              value: mon
+            - label: Tuesday
+              value: tue
+            - label: Wednesday
+              value: wed
+            - label: Thursday
+              value: thu
+            - label: Friday
+              value: fri
+            - label: Saturday
+              value: sat
+            - label: Sunday
+              value: sun
+          multiple: true
+          custom_value: false
+          mode: list
+          sort: false
+
+    notification_on:
+      name: "Notification: Lights on message"
+      description: |
+        ***Optional setting*** : 
+          Enter message content to recieve a notification when lights have turned on.
+      default:
+      selector:
+        text:
+
+    notification_off:
+      name: "Notification: Lights off message"
+      description: |
+        ***Optional setting*** : 
+          Enter message content to recieve a notification when lights have turned off.
+      default:
+      selector:
+        text:
+
+    lighting_helper_toggle:
+      name: "Active action tracker"
+      description: |
+        ***Required setting*** :
+          Select the unique helper variable to be used to track trigger based actions
+          *note: the automation requires this helper to function correctly*
+      default:
+      selector:
+        entity:
+          domain: input_boolean
+          multiple: false
+
+mode: single
+max_exceeded: silent
+
+trigger:
+  - platform: time
+    at: !input time_on_trigger
+    id: trigger_time_on
+  - platform: time
+    at: !input time_off_trigger
+    id: trigger_time_off
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: !input sun_trigger
+    id: trigger_sun_on
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    above: !input sun_trigger
+    id: trigger_sun_off
+  - platform: homeassistant
+    event: start
+
+condition:
+  - condition: time
+    weekday: !input weekday_schedule
+
+variables:
+  time_on: !input time_on_trigger
+  time_off: !input time_off_trigger
+  message_on: !input notification_on
+  message_off: !input notification_off
+
+  notify_on: |
+    {% if message_on is none %} false
+    {% else %} true
+    {% endif %}
+
+  notify_off: |
+    {% if message_off is none %} false
+    {% elif trigger.id == "trigger_homeassistant_restart" %} false
+    {% else %} true
+    {% endif %}
+
+action:
+  - choose:
+      - alias: "Triggered by Sun Solar Elevation below condition"
+        conditions:
+          - condition: trigger
+            id: trigger_sun_on
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input lighting_helper_toggle
+
+      - alias: "Triggered by Time On condition"
+        conditions:
+          - condition: trigger
+            id: trigger_time_on
+          - condition: numeric_state
+            entity_id: sun.sun
+            attribute: elevation
+            below: !input sun_trigger
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input lighting_helper_toggle
+
+      - alias: "Triggered by Sun Solar Elevation above condition"
+        conditions:
+          - condition: trigger
+            id: trigger_sun_off
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: !input lighting_helper_toggle
+
+      - alias: "Triggered by Time Off condition"
+        conditions:
+          - condition: trigger
+            id: trigger_time_off
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: !input lighting_helper_toggle
+
+    default:
+      - alias: "Home Assistant Restart: initialise lighting_helper_toggle"
+        service: input_boolean.turn_off
+        target:
+          entity_id: !input lighting_helper_toggle
+
+      - alias: "Home Assistant Restart: Lighting On Checks"
+        choose:
+          - alias: "condition alias: Time On/Off Defined"
+            conditions:
+              - condition: template
+                value_template: "{{ time_on is not none and time_off is not none}}"
+              - condition: template
+                value_template: "{{ time_on <= time_off }}"
+              - condition: template
+                value_template: >-
+                  {{ time_on <= now().strftime('%H:%M:%S') <= time_off }}
+              - condition: numeric_state
+                entity_id: sun.sun
+                attribute: elevation
+                below: !input sun_trigger
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: !input lighting_helper_toggle
+
+          - alias: "condition alias: Time Off/On Defined"
+            conditions:
+              - condition: template
+                value_template: "{{ time_on is not none and time_off is not none}}"
+              - condition: template
+                value_template: "{{ time_on > time_off }}"
+              - condition: template
+                value_template: >-
+                  {{ time_on <= now().strftime('%H:%M:%S') or now().strftime('%H:%M:%S') <= time_off }}
+              - condition: numeric_state
+                entity_id: sun.sun
+                attribute: elevation
+                below: !input sun_trigger
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: !input lighting_helper_toggle
+
+          - alias: "condition alias: Time On Defined"
+            conditions:
+              - condition: template
+                value_template: "{{ time_on is not none and time_off is none}}"
+              - condition: template
+                value_template: >-
+                  {{ time_on <= now().strftime('%H:%M:%S') }}
+              - condition: numeric_state
+                entity_id: sun.sun
+                attribute: elevation
+                below: !input sun_trigger
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: !input lighting_helper_toggle
+
+          - alias: "condition alias: Time On not Defined"
+            conditions:
+              - condition: template
+                value_template: "{{ time_on is none }}"
+              - condition: numeric_state
+                entity_id: sun.sun
+                attribute: elevation
+                below: !input sun_trigger
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: !input lighting_helper_toggle
+
+        default:
+          stop: "Home Assistant Restarted: Lights on criteria not met"
+
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input lighting_helper_toggle
+            state: "on"
+        sequence:
+          - repeat:
+              sequence:
+                - service: light.turn_on
+                  target:
+                    entity_id: !input light_targets
+                - delay:
+                    seconds: 5
+              while:
+                - condition: not
+                  conditions:
+                    - condition: state
+                      entity_id: !input light_targets
+                      state: "on"
+
+          - alias: "Send notification of actions taken"
+            choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ notify_on }}"
+                sequence:
+                  - service: notify.notify
+                    data:
+                      message: "{{ message_on }}"
+
+    default:
+      - repeat:
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: !input light_targets
+            - delay:
+                seconds: 5
+          while:
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: !input light_targets
+                  state: "off"
+
+      - alias: "Send notification of actions taken"
+        choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ notify_off }}"
+            sequence:
+              - service: notify.notify
+                data:
+                  message: "{{ message_off }}"

@@ -1,0 +1,80 @@
+blueprint:
+  name: Target temperature adjustment depending on second temperature sensor
+  description: 'Sets target temperature depending on second temperature sensor. This
+    blueprint is inspired by this blueprint https://community.home-assistant.io/t/tado-set-offset-using-separate-temperature-sensor/288515
+    created by Sanderma. Since not all thermostat devices have an configurable offset,
+    this blueprint sets the target temperature of the thermostat device depending
+    on a given target temperature and a second temperature sensor.
+
+    '
+  domain: automation
+  input:
+    temperature_sensor:
+      name: Temperature sensor
+      description: This sensor will be used as the source.
+      selector:
+        entity:
+          domain:
+          - sensor
+          device_class:
+          - temperature
+          multiple: false
+    thermostat:
+      name: Thermostat
+      description: The thermostat to set target temperature
+      selector:
+        entity:
+          domain:
+          - climate
+          multiple: false
+    target_temperature:
+      name: Target temperature
+      description: Target temperature of the thermostat
+      selector:
+        number:
+          min: 5.0
+          max: 30.0
+          step: 0.5
+          unit_of_measurement: °C
+          mode: slider
+      default: 21
+  source_url: https://gist.github.com/nevesenin/86c471e8ea5ab10a2b9ddcbca6dbbccb
+variables:
+  thermostat: !input thermostat
+  temperature_sensor: !input temperature_sensor
+  target_temperature: !input target_temperature
+  actual_temperature: '{{ states(temperature_sensor) | float }}'
+  calculated_adjustment: '{{ target_temperature - actual_temperature }}'
+  calculated_target_temperature: '{{ ( ( ( target_temperature + calculated_adjustment
+    ) * 2 ) | round ) / 2 }}'
+trigger:
+- platform: state
+  entity_id: !input thermostat
+  attribute: '{{ current_temperature_attribute }}'
+- platform: state
+  entity_id: !input temperature_sensor
+condition: '{{ calculated_adjustment != 0 }}'
+action:
+- service: system_log.write
+  data:
+    message: '{{ thermostat }} has temp difference of {{ calculated_adjustment }}.
+      Setting target temperature to {{ calculated_target_temperature }}
+
+      '
+    level: info
+    logger: blueprints.nevesenin.target_temperature_adjustment
+- service: system_log.write
+  data:
+    message: 'thermostat: {{ thermostat }}, temperature_sensor: {{ temperature_sensor
+      }}, target_temperature: {{ target_temperature }}, actual_temperature: {{ actual_temperature
+      }}, calculated_adjustment: {{ calculated_adjustment }}, calculated_target_temperature:
+      {{ calculated_target_temperature }}
+
+      '
+    level: debug
+    logger: blueprints.nevesenin.target_temperature_adjustment
+- service: climate.set_temperature
+  data:
+    temperature: '{{ calculated_target_temperature }}'
+    entity_id: '{{ thermostat }}'
+mode: single

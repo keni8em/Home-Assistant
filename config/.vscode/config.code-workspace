@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"vscode-home-assistant.ignoreCertificates": true
+	}
+}

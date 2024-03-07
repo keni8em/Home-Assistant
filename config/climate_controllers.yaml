@@ -1,0 +1,117 @@
+# # - platform: smart_thermostat
+# #   name: Bedroom Smart Thermostat
+# #   unique_id: climate.st_bedroom
+# #   heater: switch.dimplex_heater
+# #   target_sensor: sensor.bedroom_temperature
+# #   ac_mode: false
+# #   initial_hvac_mode: heat
+# #   min_temp: 10
+# #   max_temp: 30
+# #   pwm: 00:30:00
+# #   min_cycle_duration: 00:01:00
+# #   keep_alive: 00:01:00
+# #   target_temp_step: 0.5
+# #   precision: 0.1
+# #   kp: 100
+# #   ki: 0
+# #   kd: 0
+# #   ke: 0
+# #   sampling_period: 00:30:00
+# #   preset_sync_mode: sync
+# #   away_temp: 10
+# #   eco_temp: 14
+# #   comfort_temp: 18
+# #   home_temp: 22
+# #   boost_temp: 25
+# #   force_off_state: true
+# #   debug: true
+# # outdoor_sensor: sensor.outside_temperature
+# # target_temp: 10.0
+# # cold_tolerance: 0
+# # hot_tolerance: 0
+# # sensor_stall: 01:00:00
+# # output_safety: 10.0
+# # min_off_cycle_duration: 00:01:00
+# # min_cycle_duration_pid_off: 00:01:00
+# # min_off_cycle_duration_pid_off: 00:01:00
+# # noiseband: 0.5
+# # lookback: 00:10:00
+# # autotune: ziegler-nichols
+# # boost_pid_off: false
+
+# # - platform: smart_thermostat
+# #   name: Office Smart Thermostat
+# #   unique_id: climate.st_office
+# #   # heater: input_boolean.var_office_smart_thermostat_toggle
+# #   heater: binary_sensor.var_office_smart_radiator
+# #   target_sensor: sensor.office_average_temperature
+# #   ac_mode: false
+# #   initial_hvac_mode: heat
+# #   min_temp: 10
+# #   max_temp: 25
+# #   pwm: 00:15:00
+# #   min_cycle_duration: 00:01:00
+# #   keep_alive: 00:01:00
+# #   target_temp_step: 0.5
+# #   precision: 0.1
+# #   kp: 1
+# #   ki: 1
+# #   kd: 1
+# #   ke: 1
+# #   sampling_period: 00:01:00
+# #   preset_sync_mode: sync
+# #   away_temp: 10
+# #   eco_temp: 14
+# #   comfort_temp: 18
+# #   boost_temp: 22
+# #   force_off_state: true
+# #   debug: true
+# # outdoor_sensor: sensor.outside_temperature
+# # target_temp: 10.0
+# # cold_tolerance: 0
+# # hot_tolerance: 0
+# # sensor_stall: 01:00:00
+# # output_safety: 10.0
+# # min_off_cycle_duration: 00:01:00
+# # min_cycle_duration_pid_off: 00:01:00
+# # min_off_cycle_duration_pid_off: 00:01:00
+# # noiseband: 0.5
+# # lookback: 00:10:00
+# # autotune: ziegler-nichols
+# # boost_pid_off: false
+
+- platform: smart_thermostat
+  name: Office Fridge Smart Thermostat
+  unique_id: climate.st_office_fridge
+  heater: switch.office_fridge_power_local
+  target_sensor: sensor.office_fridge_tuya_temperature_sensor
+  force_off_state: true
+  ac_mode: true
+  initial_hvac_mode: cool
+  min_temp: -1
+  max_temp: 11
+  target_temp: 3.5
+  pwm: 00:15:00
+  min_cycle_duration: 00:01:00
+  keep_alive: 00:01:00
+  target_temp_step: 0.5
+  precision: 0.1
+  kp: 1
+  ki: 1
+  kd: 1
+  ke: 2
+  sampling_period: 00:01:00
+  preset_sync_mode: sync
+  debug: true
+  # outdoor_sensor:
+  # cold_tolerance: 0
+  # hot_tolerance: 0
+  # sensor_stall: 01:00:00
+  # output_safety: 5.0
+  # min_off_cycle_duration: 00:01:00
+  # min_cycle_duration_pid_off: 00:01:00
+  # min_off_cycle_duration_pid_off: 00:01:00
+  # noiseband: 0.5
+  # lookback: 00:10:00
+  # autotune: ziegler-nichols
+  # boost_pid_off: false

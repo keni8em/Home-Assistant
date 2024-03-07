@@ -1,0 +1,1803 @@
+config:
+  title: Home
+  views:
+  - badges: []
+    cards:
+    - cards:
+      - content: ' # Areas'
+        theme: Nordic
+        type: markdown
+      - cards:
+        - icon: mdi:sofa
+          name: 'Downstairs '
+          show_icon: true
+          show_name: true
+          show_state: true
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace/default_view
+          type: button
+        - icon: mdi:bed
+          name: 'Upstairs '
+          show_icon: true
+          show_name: true
+          show_state: true
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace/upstairs
+          type: button
+        type: horizontal-stack
+      - cards:
+        - icon: mdi:desk-lamp
+          name: 'Garden Office '
+          show_icon: true
+          show_name: true
+          show_state: true
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace/office
+          type: button
+        - icon: mdi:flower
+          name: 'Outside '
+          show_icon: true
+          show_name: true
+          show_state: true
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace/outside
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: ' # Configuration'
+        theme: Nordic
+        type: markdown
+      - entity: sensor.sun_solar_elevation
+        name: Current Sun Elevation Position
+        state_color: true
+        type: entity
+      - entities:
+        - entity: input_number.cfg_sun_elevation_evening_inside
+        - entity: input_number.cfg_sun_elevation_all_night_inside
+        - entity: input_number.cfg_sun_elevation_evening_outside
+        - entity: input_number.cfg_sun_elevation_all_night_outside
+        state_color: true
+        title: 'Config: Active Sensor Limits'
+        type: entities
+      type: vertical-stack
+    path: home
+    title: Home
+  - badges: []
+    cards:
+    - cards:
+      - content: '# Bedroom'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: switch.bedroom_dimplex_heater_local
+        - entity: switch.mags_overblanket_local
+        - entity: switch.mags_underblanket_local
+        show_header_toggle: false
+        state_color: true
+        title: Lighting
+        type: entities
+      - entities:
+        - entity: sensor.bedroom_tado_temperature
+        - entity: sensor.bedroom_tuya_temperature_sensor
+        - entity: sensor.bedroom_tado_humidity
+        - entity: sensor.bedroom_tuya_humidity_sensor
+        - entity: sensor.bedroom_tado_heating
+        state_color: true
+        title: Heating
+        type: entities
+      - entity: climate.bedroom_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: climate.bedroom_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: call-service
+            data: {}
+            service: climate.turn_off
+            target:
+              entity_id: climate.bedroom_tado
+          type: button
+        - entity: climate.bedroom_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.bedroom_tado
+          type: button
+        - entity: climate.bedroom_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.bedroom_tado
+          type: button
+        - entity: climate.bedroom_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.bedroom_tado
+          type: button
+        - entity: climate.bedroom_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.bedroom_tado
+          type: button
+        type: horizontal-stack
+      columns: 1
+      square: false
+      type: grid
+    - cards:
+      - content: '# Spare Room'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: sensor.spare_room_tado_temperature
+        - entity: sensor.spare_room_tado_humidity
+        - entity: sensor.spare_room_tado_heating
+        state_color: true
+        title: Heating
+        type: entities
+      - entity: climate.spare_room_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entities:
+          - entity: binary_sensor.spare_room_window
+          show_icon: true
+          show_name: true
+          show_state: false
+          state_color: true
+          type: glance
+        type: horizontal-stack
+      - cards:
+        - entity: climate.spare_room_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          show_state: false
+          tap_action:
+            action: call-service
+            data: {}
+            service: climate.turn_off
+            target:
+              entity_id: climate.spare_room_tado
+          type: button
+        - entity: climate.spare_room_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.spare_room_tado
+          type: button
+        - entity: climate.spare_room_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.spare_room_tado
+          type: button
+        - entity: climate.spare_room_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.spare_room_tado
+          type: button
+        - entity: climate.spare_room_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.spare_room_tado
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: "# Maiti\xFA's Room"
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.maitius_star_lamp_local
+        state_color: true
+        title: Lighting
+        type: entities
+      - entities:
+        - entity: sensor.maitius_room_tado_temperature
+        - entity: sensor.maitius_room_tuya_temperature_sensor
+        - entity: sensor.maitius_room_tado_humidity
+        - entity: sensor.maitius_room_tuya_humidity_sensor
+        - entity: sensor.maitius_room_tado_heating
+        state_color: true
+        title: Heating
+        type: entities
+      - entity: climate.maitius_room_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entities:
+          - entity: binary_sensor.maitius_window_big
+          show_icon: true
+          show_name: true
+          show_state: false
+          state_color: true
+          type: glance
+        - columns: 1
+          entities:
+          - entity: binary_sensor.maitius_window_top
+          show_icon: true
+          show_name: true
+          show_state: false
+          state_color: true
+          type: glance
+        type: horizontal-stack
+      - cards:
+        - entity: climate.maitius_room_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: call-service
+            data: {}
+            service: climate.turn_off
+            target:
+              entity_id: climate.maitius_room_tado
+          type: button
+        - entity: climate.maitius_room_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.maitius_room_tado
+          type: button
+        - entity: climate.maitius_room_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.maitius_room_tado
+          type: button
+        - entity: climate.maitius_room_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.maitius_room_tado
+          type: button
+        - entity: climate.maitius_room_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.maitius_room_tado
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: '# Mairead''s Room'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.maireads_desk_lamp
+        - entity: light.maireads_led_lights
+        show_header_toggle: false
+        state_color: true
+        title: lighting
+        type: entities
+      - entities:
+        - entity: sensor.maireads_room_tado_temperature
+        - entity: sensor.maireads_room_tado_humidity
+        - entity: sensor.maireads_room_tado_heating
+        state_color: true
+        title: Heating
+        type: entities
+      - entity: climate.maireads_room_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entities:
+          - entity: binary_sensor.maireads_window_left
+          show_icon: true
+          show_name: true
+          show_state: false
+          state_color: true
+          type: glance
+        - columns: 1
+          entities:
+          - entity: binary_sensor.maireads_window_right
+          show_icon: true
+          show_name: true
+          show_state: false
+          state_color: true
+          type: glance
+        type: horizontal-stack
+      - cards:
+        - entity: climate.maireads_room_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: call-service
+            data: {}
+            service: climate.turn_off
+            target:
+              entity_id: climate.maireads_room_tado
+          type: button
+        - entity: climate.maireads_room_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.maireads_room_tado
+          type: button
+        - entity: climate.maireads_room_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.maireads_room_tado
+          type: button
+        - entity: climate.maireads_room_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.maireads_room_tado
+          type: button
+        - entity: climate.maireads_room_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.maireads_room_tado
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: '# Bathroom'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.bathroom_mirror_light_local
+        state_color: true
+        title: Lighting
+        type: entities
+      type: vertical-stack
+    - cards:
+      - content: ' # Schedules'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: binary_sensor.sensor_scheduled_evening_inside_active
+        - entity: binary_sensor.sensor_scheduled_all_night_inside_active
+        - entity: binary_sensor.sensor_scheduled_evening_outside_active
+        - entity: binary_sensor.sensor_scheduled_all_night_outside_active
+        - entity: binary_sensor.workday_sensor
+        show_icon: true
+        show_name: false
+        show_state: false
+        state_color: true
+        title: 'Sensors: Schedule Conditions'
+        type: glance
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - light
+        - sensor
+        - sun
+        sort_by:
+        - state
+        - title
+        tags:
+        - upstairs
+        time_step: 15
+        title: 'Schedule: Inside Lighting'
+        type: custom:scheduler-card
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - climate
+        - sensor
+        - sun
+        sort_by:
+        - state
+        - title
+        tags:
+        - upstairs-heating
+        time_step: 15
+        title: 'Window Event: Heating Action'
+        type: custom:scheduler-card
+      type: vertical-stack
+    path: upstairs
+    title: Upstairs
+    visible: []
+  - badges: []
+    cards:
+    - cards:
+      - content: '# Front Room'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.teacup_lamp_local
+        - entity: light.twig_lamp_local
+        show_header_toggle: false
+        state_color: false
+        title: Lighting
+        type: entities
+      - entities:
+        - entity: sensor.front_room_tado_temperature
+        - entity: sensor.front_room_tuya_temperature_sensor
+        - entity: sensor.front_room_tado_humidity
+        - entity: sensor.front_room_tuya_humidity_sensor
+        - entity: sensor.front_room_tado_heating
+        show_header_toggle: true
+        title: Heating
+        type: entities
+      - entity: climate.front_room_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: climate.front_room_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: call-service
+            service: climate.turn_off
+            target:
+              entity_id: climate.front_room_tado
+          type: button
+        - entity: climate.front_room_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.front_room_tado
+          type: button
+        - entity: climate.front_room_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.front_room_tado
+          type: button
+        - entity: climate.front_room_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.front_room_tado
+          type: button
+        - entity: climate.front_room_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.front_room_tado
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: '# Family Room'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.jack_opatsy_lamp_local
+        show_header_toggle: false
+        state_color: false
+        title: Lighting
+        type: entities
+      - entities:
+        - entity: sensor.family_room_tado_temperature
+        - entity: sensor.family_room_tado_humidity
+        - entity: sensor.family_room_tado_heating
+        title: Heating
+        type: entities
+      - entity: climate.family_room_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: climate.family_room_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: call-service
+            service: climate.turn_off
+            target:
+              entity_id: climate.family_room_tado
+          type: button
+        - entity: climate.family_room_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.family_room_tado
+          type: button
+        - entity: climate.family_room_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.family_room_tado
+          type: button
+        - entity: climate.family_room_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.family_room_tado
+          type: button
+        - entity: climate.family_room_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.family_room_tado
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: '# Kitchen'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: sensor.kitchen_tado_temperature
+        - entity: sensor.kitchen_tado_humidity
+        - entity: sensor.kitchen_tado_heating
+        state_color: true
+        title: Heating
+        type: entities
+      - entity: climate.kitchen_tado
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: climate.kitchen_tado
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          show_state: false
+          tap_action:
+            action: call-service
+            service: climate.turn_off
+            target:
+              entity_id: climate.kitchen_tado
+          type: button
+        - entity: climate.kitchen_tado
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.kitchen_tado
+          type: button
+        - entity: climate.kitchen_tado
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.kitchen_tado
+          type: button
+        - entity: climate.kitchen_tado
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.kitchen_tado
+          type: button
+        - entity: climate.kitchen_tado
+          icon: mdi:refresh-auto
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: call-service
+            data:
+              hvac_mode: auto
+            service: climate.set_hvac_mode
+            target:
+              entity_id: climate.kitchen_tado
+          type: button
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - content: '# Hallway'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.hall_lamp_local
+        state_color: true
+        title: Lighting
+        type: entities
+      - entities:
+        - entity: sensor.nest_temperature
+        - entity: sensor.hallway_humidity
+        state_color: true
+        title: Heating
+        type: entities
+      - entity: climate.nest_thermostat
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: climate.nest_thermostat
+          icon: mdi:power
+          name: Power
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: toggle
+          type: button
+        - entity: climate.nest_thermostat
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.nest_thermostat
+          type: button
+        - entity: climate.nest_thermostat
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.nest_thermostat
+          type: button
+        - entity: climate.nest_thermostat
+          icon: mdi:fire
+          icon_height: 25px
+          name: "24\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 24
+            service: climate.set_temperature
+            target:
+              entity_id: climate.nest_thermostat
+          type: button
+        - entity: climate.nest_thermostat
+          icon: ''
+          icon_height: 25px
+          show_icon: true
+          show_name: false
+          show_state: true
+          tap_action:
+            action: more-info
+          type: button
+        type: horizontal-stack
+      columns: 1
+      square: false
+      type: grid
+    - cards:
+      - content: ' # Schedules'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: binary_sensor.sensor_scheduled_evening_inside_active
+        - entity: binary_sensor.sensor_scheduled_all_night_inside_active
+        - entity: binary_sensor.sensor_scheduled_evening_outside_active
+        - entity: binary_sensor.sensor_scheduled_all_night_outside_active
+        - entity: binary_sensor.workday_sensor
+        show_icon: true
+        show_name: false
+        show_state: false
+        state_color: true
+        title: 'Sensors: Schedule Conditions'
+        type: glance
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - light
+        - sensor
+        - sun
+        sort_by:
+        - state
+        - title
+        tags:
+        - downstairs
+        time_step: 15
+        title: 'Schedule: Inside Lighting'
+        type: custom:scheduler-card
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - climate
+        - sensor
+        - sun
+        sort_by:
+        - state
+        - title
+        tags:
+        - downstairs
+        time_step: 15
+        title: 'Window Event: Heating Action'
+        type: custom:scheduler-card
+      type: vertical-stack
+    path: default_view
+    title: Downstairs
+    visible: []
+  - badges: []
+    cards:
+    - cards:
+      - content: '# Outside'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.office_outside_lights_local
+          name: Office Lights
+        - entity: light.outside_string_lights_local
+        - entity: light.outside_front_wall_lights_sl_top_local
+        - entity: light.outside_front_wall_lights_sl_bottom_local
+        - entity: light.outside_front_wall_lights_sa_top_local
+        - entity: light.outside_front_wall_lights_sa_bottom_local
+        - entity: light.house_front_lights
+        - entity: sensor.sun_solar_elevation
+        - entity: sensor.outside_temperature
+          name: Temperature
+        state_color: true
+        type: entities
+      type: vertical-stack
+    - cards:
+      - content: '# Weather'
+        theme: Nordic
+        type: markdown
+      - cards:
+        - entity: sensor.sun_solar_elevation
+          max: 90
+          min: -90
+          name: Sun Solar Elevation
+          needle: true
+          segments:
+          - color: '#2e4482'
+            from: -90
+          - color: var(--warning-color)
+            from: -10
+          - color: '#c9ebff'
+            from: 10
+          type: gauge
+        type: vertical-stack
+      - cards:
+        - entity: weather.norweigen_forecast
+          forecast_type: daily
+          show_current: true
+          show_forecast: true
+          type: weather-forecast
+        type: vertical-stack
+      type: vertical-stack
+    - cards:
+      - content: ' # Schedules'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: binary_sensor.sensor_scheduled_evening_inside_active
+        - entity: binary_sensor.sensor_scheduled_all_night_inside_active
+        - entity: binary_sensor.sensor_scheduled_evening_outside_active
+        - entity: binary_sensor.sensor_scheduled_all_night_outside_active
+        - entity: binary_sensor.workday_sensor
+        show_icon: true
+        show_name: false
+        show_state: false
+        state_color: true
+        title: 'Sensors: Schedule Conditions'
+        type: glance
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - light
+        - sensor
+        - sun
+        sort_by:
+        - state
+        - title
+        tags:
+        - outside-lighting
+        time_step: 15
+        title: 'Schedule: Outside Lighting'
+        type: custom:scheduler-card
+      type: vertical-stack
+    path: outside
+    title: Outside
+    visible: []
+  - badges: []
+    cards:
+    - cards:
+      - content: '# Garden Office'
+        theme: Nordic
+        type: markdown
+      - entities:
+        - entity: light.office_desk_lights_local
+        - entity: light.office_light_bars
+        - entity: light.office_floor_lamp_left_local
+        - entity: light.office_floor_lamp_right_local
+        - entity: light.group_office_floor_lamps
+        - entity: light.office_ceiling_light_local
+        - entity: light.office_lava_lamp_local
+        show_header_toggle: false
+        state_color: true
+        title: Lighting
+        type: entities
+      - entities:
+        - entity: switch.office_printer_power_local
+        - entity: switch.office_fridge_power_local
+        show_header_toggle: false
+        state_color: true
+        title: Power Sockets
+        type: entities
+      - entities:
+        - entity: binary_sensor.office_presence_sensor_local
+        - entity: binary_sensor.office_door
+        - entity: binary_sensor.office_side_window
+        - entity: binary_sensor.office_left_window
+        - entity: binary_sensor.office_right_window
+        state_color: false
+        title: Active Sensors
+        type: entities
+      type: vertical-stack
+    - cards:
+      - entities:
+        - entity: sensor.office_tuya_temperature_sensor
+        - entity: sensor.office_heater_current_temperature
+        - entity: sensor.office_average_temperature
+        - entity: sensor.office_tuya_humidity_sensor
+        - entity: sensor.office_fridge_tuya_temperature_sensor
+        - entity: sensor.office_fridge_tuya_humidity_sensor
+        state_color: true
+        title: Climate Measurements
+        type: entities
+      type: vertical-stack
+    - cards:
+      - entities:
+        - entity: climate.office_heater_local
+        - entity: climate.office_fridge_smart_thermostat
+        title: Thermostat Status
+        type: entities
+      type: vertical-stack
+    - cards:
+      - entity: climate.office_heater_local
+        features:
+        - preset_modes:
+          - Low
+          - High
+          style: dropdown
+          type: climate-preset-modes
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: climate.office_heater_local
+          icon: mdi:power
+          name: 'OFF'
+          show_icon: true
+          show_name: false
+          tap_action:
+            action: call-service
+            service: input_boolean.toggle
+            target:
+              entity_id: input_boolean.office_radiator
+          type: button
+        - entity: climate.office_heater_local
+          icon: mdi:leaf
+          icon_height: 25px
+          name: "15\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 15
+            service: climate.set_temperature
+            target:
+              entity_id: climate.office_heater_local
+          type: button
+        - entity: climate.office_heater_local
+          icon: mdi:heat-wave
+          icon_height: 25px
+          name: "18\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 18
+            service: climate.set_temperature
+            target:
+              entity_id: climate.office_heater_local
+          type: button
+        - entity: climate.office_heater_local
+          icon: mdi:fire
+          icon_height: 25px
+          name: "21\xB0C"
+          show_icon: true
+          show_name: true
+          tap_action:
+            action: call-service
+            data:
+              temperature: 21
+            service: climate.set_temperature
+            target:
+              entity_id: climate.office_heater_local
+          type: button
+        - cards:
+          - entity: climate.office_heater_local
+            icon: mdi:chevron-double-up
+            name: 2.0kW
+            show_icon: false
+            show_name: true
+            show_state: false
+            tap_action:
+              action: call-service
+              data:
+                preset_mode: High
+              service: climate.set_preset_mode
+              target:
+                entity_id: climate.office_heater_local
+            type: button
+          - entity: climate.office_heater_local
+            icon: mdi:chevron-up
+            name: 1.5kW
+            show_icon: false
+            show_name: true
+            show_state: false
+            tap_action:
+              action: call-service
+              data:
+                preset_mode: Low
+              service: climate.set_preset_mode
+              target:
+                entity_id: climate.office_heater_local
+            type: button
+          type: vertical-stack
+        type: horizontal-stack
+      type: vertical-stack
+    - cards:
+      - entity: climate.office_fridge_smart_thermostat
+        features:
+        - hvac_modes:
+          - cool
+          - 'off'
+          type: climate-hvac-modes
+        show_current_as_primary: true
+        type: thermostat
+      type: vertical-stack
+    - cards:
+      - chart_type: line
+        days_to_show: 1
+        entities:
+        - sensor.office_tuya_humidity_sensor
+        - sensor.office_fridge_tuya_humidity_sensor
+        hide_legend: true
+        logarithmic_scale: false
+        period: hour
+        stat_types:
+        - mean
+        - max
+        - min
+        title: Office Humidity Profile
+        type: statistics-graph
+      - chart_type: line
+        days_to_show: 1
+        entities:
+        - sensor.office_average_temperature
+        - sensor.office_fridge_tuya_temperature_sensor
+        hide_legend: true
+        period: hour
+        stat_types:
+        - mean
+        - min
+        - max
+        title: Office Temperature (24 hours)
+        type: statistics-graph
+      - chart_type: line
+        days_to_show: 7
+        entities:
+        - sensor.office_average_temperature
+        - sensor.office_fridge_tuya_temperature_sensor
+        hide_legend: true
+        period: day
+        title: Office Temperature (week)
+        type: statistics-graph
+      - chart_type: line
+        days_to_show: 30
+        entities:
+        - sensor.office_average_temperature
+        - sensor.office_fridge_tuya_temperature_sensor
+        hide_legend: true
+        period: day
+        stat_types:
+        - mean
+        - min
+        - max
+        title: Office Temperature (month)
+        type: statistics-graph
+      - entities:
+        - entity: switch.office_fridge_power_local
+        - entity: sensor.office_fridge_tuya_temperature_sensor
+        type: history-graph
+      - chart_type: line
+        days_to_show: 1
+        entities:
+        - sensor.office_fridge_tuya_temperature_sensor
+        hide_legend: true
+        period: hour
+        stat_types:
+        - mean
+        - min
+        - max
+        title: Fridge Temperature Profile
+        type: statistics-graph
+      type: vertical-stack
+    - cards:
+      - entity: sensor.office_fridge_tuya_temperature_sensor
+        max: 12
+        min: -1.5
+        name: Fridge Temperature
+        needle: true
+        segments:
+        - color: var(--warning-color)
+          from: 1
+        - color: var(--success-color)
+          from: 3
+        - color: var(--warning-color)
+          from: 7
+        - color: var(--error-color)
+          from: 9
+        type: gauge
+      type: vertical-stack
+    - cards:
+      - entities:
+        - entity: sensor.office_tuya_climate_sensor_battery
+        - entity: sensor.office_fridge_tuya_climate_sensor_battery
+        - entity: sensor.office_door_battery
+        - entity: sensor.office_side_window_battery
+        - entity: sensor.office_left_window_battery
+        - entity: sensor.office_right_window_battery
+        state_color: true
+        title: Battery States
+        type: entities
+      type: vertical-stack
+    - cards:
+      - content: ' # Schedules'
+        theme: Nordic
+        type: markdown
+      - entity: binary_sensor.workday_sensor
+        icon: ''
+        state_color: true
+        type: entity
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - climate
+        show_header_toggle: false
+        sort_by:
+        - state
+        - relative-time
+        tags:
+        - office-heating
+        title: Office Heating Schedule
+        type: custom:scheduler-card
+      - discover_existing: false
+        display_options:
+          icon: action
+          primary_info: default
+          secondary_info: []
+        exclude: []
+        include:
+        - binary_sensor
+        - light
+        - sun
+        show_header_toggle: false
+        sort_by:
+        - state
+        - relative-time
+        tags:
+        - office-lighting
+        title: Office Lighting Schedule
+        type: custom:scheduler-card
+      type: vertical-stack
+    path: office
+    title: Office
+    visible: []
+  - badges: []
+    cards:
+    - cards:
+      - content: '### Office Fridge Smart Thermostat PID Parameters'
+        theme: Nordic
+        type: markdown
+      - entity: climate.office_fridge_smart_thermostat
+        show_current_as_primary: true
+        type: thermostat
+      - cards:
+        - entity: switch.office_fridge_power_local
+          icon_tap_action:
+            action: none
+          state_content:
+          - state
+          - last-changed
+          tap_action:
+            action: more-info
+          type: tile
+        type: horizontal-stack
+      - columns: 3
+        entities:
+        - entity: sensor.smart_thermostat_fridge_output
+        - entity: sensor.smart_thermostat_fridge_dt
+        - entity: sensor.smart_thermostat_fridge_e
+        - entity: sensor.smart_thermostat_fridge_p
+        - entity: sensor.smart_thermostat_fridge_i
+        - entity: sensor.smart_thermostat_fridge_d
+        show_icon: false
+        show_name: true
+        show_state: true
+        state_color: true
+        type: glance
+      - entities:
+        - entity: input_number.pid_proportional_fridge
+        - entity: input_number.pid_integral_fridge
+        - entity: input_number.pid_derivative_fridge
+        - entity: input_number.pid_external_fridge
+        state_color: false
+        type: entities
+      - entities:
+        - entity: switch.office_fridge_power_local
+        hours_to_show: 12
+        type: history-graph
+      - entities:
+        - entity: climate.office_fridge_smart_thermostat
+        hours_to_show: 12
+        type: history-graph
+      type: vertical-stack
+    - cards:
+      - content: '### Office Heating Smart Thermostat PID Parameters'
+        theme: Nordic
+        type: markdown
+      - disable_buttons: true
+        entity: climate.office_smart_thermostat
+        name: Office Smart Thermostat
+        set_current_as_main: true
+        type: custom:better-thermostat-ui-card
+      - cards:
+        - entity: binary_sensor.var_office_smart_radiator
+          hide_state: false
+          icon: mdi:electric-switch
+          icon_tap_action:
+            action: none
+          name: PID Output
+          show_entity_picture: false
+          state_content:
+          - state
+          - last-changed
+          type: tile
+        - color: accent
+          entity: climate.office_smart_radiator
+          icon_tap_action:
+            action: none
+          name: Heater Output
+          show_entity_picture: false
+          state_content:
+          - current_temperature
+          - temperature
+          type: tile
+        type: horizontal-stack
+      - columns: 3
+        entities:
+        - entity: sensor.smart_thermostat_output_office
+        - entity: sensor.smart_thermostat_dt_office
+        - entity: sensor.smart_thermostat_e_office
+        - entity: sensor.smart_thermostat_p_office
+        - entity: sensor.smart_thermostat_i_office
+        - entity: sensor.smart_thermostat_d_office
+        show_icon: false
+        show_name: true
+        show_state: true
+        state_color: true
+        type: glance
+      - entities:
+        - entity: input_number.pid_proportional_office
+        - entity: input_number.pid_integral_office
+        - entity: input_number.pid_derivative_office
+        - entity: input_number.pid_external_office
+        state_color: false
+        type: entities
+      - entities:
+        - entity: binary_sensor.var_office_smart_radiator
+        hours_to_show: 12
+        type: history-graph
+      - entities:
+        - entity: climate.office_smart_thermostat
+        hours_to_show: 12
+        type: history-graph
+      type: vertical-stack
+    - cards:
+      - content: '### Bedroom Dimplex Smart Thermostat PID Parameters'
+        theme: Nordic
+        type: markdown
+      - disable_buttons: true
+        entity: climate.bedroom_smart_thermostat
+        name: Bedroom Smart Thermostat
+        set_current_as_main: true
+        type: custom:better-thermostat-ui-card
+      - entity: switch.dimplex_heater
+        icon_tap_action:
+          action: none
+        name: Dimplex Heater Output
+        state_content:
+        - state
+        - last-changed
+        type: tile
+      - columns: 3
+        entities:
+        - entity: sensor.smart_thermostat_output_bedroom
+        - entity: sensor.smart_thermostat_dt_bedroom
+        - entity: sensor.smart_thermostat_e_bedroom
+        - entity: sensor.smart_thermostat_p_bedroom
+        - entity: sensor.smart_thermostat_i_bedroom
+        - entity: sensor.smart_thermostat_d_bedroom
+        show_icon: false
+        show_name: true
+        show_state: true
+        state_color: true
+        type: glance
+      - entities:
+        - entity: input_number.pid_proportional_bedroom
+        - entity: input_number.pid_integral_bedroom
+        - entity: input_number.pid_derivative_bedroom
+        - entity: input_number.pid_external_bedroom
+        state_color: false
+        type: entities
+      - entities:
+        - entity: switch.dimplex_heater
+        hours_to_show: 12
+        type: history-graph
+      - entities:
+        - entity: climate.bedroom_smart_thermostat
+        hours_to_show: 12
+        type: history-graph
+      columns: 1
+      square: false
+      type: grid
+    path: pid-tuning
+    title: PID Tuning
+  - badges: []
+    cards:
+    - entities:
+      - entity: sensor.disk_free
+      - entity: sensor.disk_use_percent
+      - entity: sensor.disk_use
+      - entity: sensor.last_boot
+      - entity: sensor.memory_free
+      - entity: sensor.memory_use
+      - entity: sensor.memory_use_percent
+      - entity: sensor.processor_temperature
+      - entity: sensor.processor_use
+      state_color: true
+      title: Sensor
+      type: entities
+    - entities:
+      - entity: sensor.home_assistant_core_cpu_percent
+        name: CPU percent
+      - entity: sensor.home_assistant_core_memory_percent
+        name: Memory percent
+      state_color: true
+      title: Home Assistant Core
+      type: entities
+    - entities:
+      - entity: sensor.studio_code_server_cpu_percent
+        name: CPU percent
+      - entity: sensor.studio_code_server_memory_percent
+        name: Memory percent
+      - entity: sensor.studio_code_server_newest_version
+        name: Newest version
+      - entity: binary_sensor.studio_code_server_running
+        name: Running
+      - entity: sensor.studio_code_server_version
+        name: Version
+      state_color: true
+      title: Studio Code Server
+      type: entities
+    - entities:
+      - entity: sensor.home_assistant_supervisor_cpu_percent
+        name: CPU percent
+      - entity: sensor.home_assistant_supervisor_memory_percent
+        name: Memory percent
+      state_color: true
+      title: Home Assistant Supervisor
+      type: entities
+    - entities:
+      - entity: sensor.terminal_ssh_cpu_percent
+        name: CPU percent
+      - entity: sensor.terminal_ssh_memory_percent
+        name: Memory percent
+      - entity: sensor.terminal_ssh_newest_version
+        name: Newest version
+      - entity: binary_sensor.terminal_ssh_running
+        name: Running
+      - entity: sensor.terminal_ssh_version
+        name: Version
+      state_color: true
+      title: Terminal & SSH
+      type: entities
+    - entities:
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_3
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_2
+      - entity: switch.office_printer_power_local
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_4
+      - entity: switch.wifi_node_power_kitchen_local
+      - entity: switch.wifi_node_power_spare_room_local
+      - entity: switch.wifi_node_power_bedroom_local
+      - entity: switch.wifi_node_power_office_local
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_1
+      show_header_toggle: false
+      state_color: true
+      title: WiFi Smart Plugs
+      type: entities
+    - cards:
+      - entities:
+        - entity: sensor.frontroom_th_battery
+        - entity: sensor.bedroom_th_sensor_battery
+        - entity: sensor.maitius_room_th_battery
+        - entity: sensor.office_th_battery
+        - entity: sensor.office_fridge_th_battery
+        state_color: true
+        title: 'Batteries: Temperature & Humidity Sensors'
+        type: entities
+      - entities:
+        - entity: sensor.office_door_battery
+        - entity: sensor.office_side_window_battery
+        - entity: sensor.office_left_window_battery
+        - entity: sensor.office_right_window_battery
+        state_color: true
+        title: 'Batteries: Door & Window Sensors'
+        type: entities
+      type: vertical-stack
+    - entities:
+      - entity: sensor.kilbroney_automatic_geofencing
+        name: Automatic geofencing
+      - entity: sensor.kilbroney_geofencing_mode
+        name: Geofencing mode
+      - entity: sensor.kilbroney_outdoor_temperature
+        name: Outdoor temperature
+      - entity: sensor.kilbroney_solar_percentage
+        name: Solar percentage
+      - entity: sensor.kilbroney_tado_mode
+        name: Tado mode
+      - entity: sensor.kilbroney_weather_condition
+        name: Weather condition
+      title: Tado
+      type: entities
+    - entities:
+      - entity: sensor.kenneth_s_iphone_14_activity
+        name: Activity
+      - entity: sensor.kenneth_s_iphone_14_average_active_pace
+        name: Average Active Pace
+      - entity: sensor.kenneth_s_iphone_14_battery_level
+        name: Battery Level
+      - entity: sensor.kenneth_s_iphone_14_battery_state
+        name: Battery State
+      - entity: sensor.kenneth_s_iphone_14_bssid
+        name: BSSID
+      - entity: sensor.kenneth_s_iphone_14_connection_type
+        name: Connection Type
+      - entity: sensor.kenneth_s_iphone_14_distance
+        name: Distance
+      - entity: sensor.kenneth_s_iphone_14_floors_ascended
+        name: Floors Ascended
+      - entity: sensor.kenneth_s_iphone_14_floors_descended
+        name: Floors Descended
+      - entity: binary_sensor.kenneth_s_iphone_14_focus
+        name: Focus
+      - entity: sensor.kenneth_s_iphone_14_last_update_trigger
+        name: Last Update Trigger
+      - entity: sensor.kenneth_s_iphone_14_sim_1
+        name: SIM 1
+      - entity: sensor.kenneth_s_iphone_14_sim_2
+        name: SIM 2
+      - entity: sensor.kenneth_s_iphone_14_ssid
+        name: SSID
+      - entity: sensor.kenneth_s_iphone_14_steps
+        name: Steps
+      - entity: sensor.kenneth_s_iphone_14_storage
+        name: Storage
+      title: Kenneth's iPhone 14
+      type: entities
+    - entity: weather.norweigen_forecast
+      show_forecast: false
+      type: weather-forecast
+    - entities:
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_1
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_2
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_3
+      - entity: switch.smart_switch_2110258648226490858748e1e97a6403_outlet_4
+      show_header_toggle: false
+      title: Smart extension lead
+      type: entities
+    - cards:
+      - cards:
+        - entities:
+          - entity: switch.vscene_b1_bedroom_single_click
+          - entity: switch.vscene_b1_bedroom_double_click
+          - entity: switch.vscene_b1_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          state_color: true
+          theme: Nordic
+          title: B1
+          type: glance
+        - entities:
+          - entity: switch.vscene_b3_bedroom_single_click
+          - entity: switch.vscene_b3_bedroom_double_click
+          - entity: switch.vscene_b3_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          theme: Nordic
+          title: B3
+          type: glance
+        - entities:
+          - entity: switch.vscene_b2_bedroom_single_click
+          - entity: switch.vscene_b2_bedroom_double_click
+          - entity: switch.vscene_b2_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          state_color: true
+          theme: Nordic
+          title: B2
+          type: glance
+        - entities:
+          - entity: switch.vscene_b4_bedroom_single_click
+          - entity: switch.vscene_b4_bedroom_double_click
+          - entity: switch.vscene_b4_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          theme: Nordic
+          title: B4
+          type: glance
+        columns: 2
+        square: false
+        title: Bedroom Scene Switch
+        type: grid
+      type: vertical-stack
+    path: system
+    title: System
+  - badges: []
+    cards:
+    - name: Subview
+      show_icon: true
+      show_name: true
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/test-subview
+      type: button
+    - cards:
+      - cards:
+        - entities:
+          - entity: switch.vscene_b1_bedroom_single_click
+          - entity: switch.vscene_b1_bedroom_double_click
+          - entity: switch.vscene_b1_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          state_color: true
+          theme: Nordic
+          title: B1
+          type: glance
+        - entities:
+          - entity: switch.vscene_b2_bedroom_single_click
+          - entity: switch.vscene_b2_bedroom_double_click
+          - entity: switch.vscene_b2_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          state_color: true
+          theme: Nordic
+          title: B2
+          type: glance
+        - entities:
+          - entity: switch.vscene_b3_bedroom_single_click
+          - entity: switch.vscene_b3_bedroom_double_click
+          - entity: switch.vscene_b3_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          theme: Nordic
+          title: B3
+          type: glance
+        - entities:
+          - entity: switch.vscene_b4_bedroom_single_click
+          - entity: switch.vscene_b4_bedroom_double_click
+          - entity: switch.vscene_b4_bedroom_long_press
+          show_icon: true
+          show_name: false
+          show_state: false
+          theme: Nordic
+          title: B4
+          type: glance
+        columns: 2
+        square: false
+        title: Bedroom Scene Switch
+        type: grid
+      - entities:
+        - entity: switch.mags_underblanket_local
+        - entity: switch.mags_overblanket_local
+        - entity: switch.bedroom_dimplex_heater_local
+        show_icon: true
+        show_name: false
+        show_state: false
+        theme: Nordic
+        type: glance
+      type: vertical-stack
+    - exclude: []
+      include:
+      - climate
+      type: custom:scheduler-card
+    - icon: si:microsoftazure
+      name: Logic Apps SharePoint Owners
+      show_icon: true
+      show_name: true
+      show_state: true
+      tap_action:
+        action: call-service
+        service: rest_command.logicapps_execute
+        target: {}
+      theme: Nordic
+      type: button
+    path: test
+    title: Test
+  - badges: []
+    cards:
+    - type: custom:button-card
+    path: test-subview
+    subview: true
+    title: Test-subview
